@@ -2,17 +2,17 @@ import { GetServerSideProps } from "next";
 import Layout from "../../../components/Layout";
 import groups from "../../../server/database/groups";
 import styles from "../../../styles/groups.module.css";
+import profile from "../../../styles/profile.module.css";
 import viewbox from "../../../styles/viewbox.module.css";
 
 interface IEventsProps {
     user: string;
     group: string;
-    events: string;
 }
+
 export default function Events({
     user: stringifiedUser,
     group: stringifiedGroup,
-    events: stringifiedEvents,
 }: IEventsProps) {
     const [user, group] = [JSON.parse(stringifiedUser), JSON.parse(stringifiedGroup)];
 
@@ -46,9 +46,22 @@ export default function Events({
                 <h3>Events</h3>
                 <div className={viewbox.viewbox}>
                     {events.map((e: any) => (
-                        <div className={viewbox.item}></div>
+                        <div className={viewbox.item}>
+                            <div>
+                                <p className={viewbox.smaller}>{e.name}</p>
+                            </div>
+                        </div>
                     ))}
                 </div>
+                <a
+                    href={`/groups/${group._id}/events/create`}
+                    className={profile.edit}
+                    style={{
+                        alignSelf: "flex-start",
+                    }}
+                >
+                    Create one
+                </a>
             </div>
         </Layout>
     );

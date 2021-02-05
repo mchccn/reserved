@@ -1,0 +1,139 @@
+.container {
+    margin: 0 auto;
+    padding: 2rem 0;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container h3 {
+    font-size: 2rem;
+    margin: 1rem 0 0.5rem;
+    width: 100%;
+    text-align: left;
+}
+
+.container p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    width: 100%;
+    text-align: left;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form h2 {
+    margin: 1rem 0;
+    font-size: 2rem;
+}
+
+.form textarea {
+    margin: 1rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 400px;
+    height: 200px;
+    font-family: var(--ff-secondary);
+    resize: none;
+}
+
+.form input[type="text"] {
+    font-family: var(--ff-secondary);
+    padding: 0.25rem;
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    width: 400px;
+}
+
+.header {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.header a {
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.info {
+    color: var(--clr-dark);
+    width: 100%;
+    display: flex;
+}
+
+.info img {
+    border-radius: 50%;
+    padding: 0.5rem;
+    width: 128px;
+    height: 128px;
+}
+
+.info hr {
+    border-left: 1px solid var(--clr-dark);
+}
+
+.info div {
+    flex: 1;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.info div hr {
+    width: 100%;
+    margin: 0.25rem 0;
+    border-top: 1px solid var(--clr-dark);
+}
+
+.info div h4 {
+    font-size: 2rem;
+}
+
+.info div p {
+    flex: 1;
+    font-size: 1rem;
+}
+
+.justify {
+    flex-direction: column;
+    align-items: flex-start !important;
+    justify-content: flex-start;
+}
+
+.justify h4 {
+    font-size: 1.65rem !important;
+}
+
+.links {
+    width: 100%;
+    display: flex;
+}
+
+.links a {
+    margin-right: 1.5rem;
+}
+
+.invite {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.invite input[type="text"] {
+    flex: 1;
+    padding: 0.25rem;
+    font-size: 1rem;
+    font-family: var(--ff-secondary);
+    height: 34px;
+}
+
+.invite input[type="submit"] {
+    align-self: flex-start;
+}

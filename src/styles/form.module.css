@@ -1,0 +1,46 @@
+.login {
+    display: grid;
+    place-items: center;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(140deg, var(--clr-blue), var(--clr-cyan));
+    background-size: 200% 100%;
+    animation: bg 5s linear alternate infinite;
+}
+
+.card h3 {
+    font-size: 2rem;
+}
+
+.card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background-color: var(--clr-light);
+}
+
+.card a {
+    transition: 0.2s transform ease;
+}
+
+.card a:hover {
+    transform: scale(1.1);
+}
+
+.icons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.icons .img {
+    flex: 1;
+}
+
+@keyframes bg {
+    from {
+        background-position: left;
+    }
+
+    to {
+        background-position: right;
+    }
+}

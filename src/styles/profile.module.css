@@ -1,0 +1,171 @@
+.profile {
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile .avatar {
+    margin: 1rem;
+    border: 1px solid var(--clr-dark);
+    border-radius: 50%;
+    width: 128px;
+}
+
+.profile .username {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.profile p {
+    font-size: 1.25rem;
+}
+
+.profile .website {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.profile a.email {
+    font-size: 1rem;
+}
+
+.profile p,
+.profile a.email {
+    color: var(--clr-dark);
+    margin: 1rem 0;
+}
+
+.profile hr {
+    border: 1px solid var(--clr-dark);
+    width: 300px;
+}
+
+.links {
+    display: flex;
+    justify-content: space-between;
+}
+
+.links a {
+    margin: 0 1rem;
+}
+
+.edit {
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--clr-light);
+    background-color: var(--clr-blue);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    margin: 0.75rem 0;
+    min-width: 125px;
+    text-align: center;
+}
+
+.edit:hover {
+    text-decoration: none;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    place-items: center;
+    width: 300px;
+}
+
+/* Edit Profile */
+
+.form-links {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    width: 400px;
+}
+
+.form-links > div {
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+}
+
+.form-links div a {
+    display: grid;
+    place-items: center;
+}
+
+.form-links div input {
+    flex: 1;
+    padding: 0.25rem;
+    font-size: 0.9rem;
+    margin-left: 1rem;
+}
+
+.form textarea {
+    margin: 1rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 400px;
+    height: 200px;
+    font-family: var(--ff-secondary);
+    resize: none;
+}
+
+.form > input[type="text"] {
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 400px;
+}
+
+/* My Account */
+
+.update-username,
+.update-email {
+    display: flex;
+    align-items: center;
+    width: 400px;
+}
+
+.update-username input[type="text"],
+.update-email input[type="text"] {
+    flex: 1;
+    font-size: 1rem;
+    padding: 0.25rem;
+    height: 34px;
+    margin: 0.5rem 0;
+}
+
+.update {
+    height: 34px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--clr-light);
+    background-color: var(--clr-cyan);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    margin-left: 1rem;
+}
+
+.update:hover {
+    text-decoration: none;
+}
+
+.delete {
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--clr-light);
+    background-color: var(--clr-red);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    margin: 0.75rem 0;
+    min-width: 125px;
+    text-align: center;
+}
+
+.delete:hover {
+    text-decoration: none;
+}

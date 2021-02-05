@@ -1,0 +1,50 @@
+.header {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(120deg, var(--clr-blue), var(--clr-cyan));
+    color: var(--clr-light);
+    height: 76px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 5px 20px 0 rgb(0 0 0 / 50%);
+    justify-content: space-between;
+}
+
+.nav {
+    max-width: 100%;
+}
+
+.logo {
+    display: grid;
+    place-items: center;
+}
+
+.logo a {
+    color: inherit;
+}
+
+.profile a:hover,
+.logo a:hover {
+    text-decoration: none;
+}
+
+.logo h2 {
+    font-size: 2.25rem;
+}
+
+.profile {
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile a {
+    color: var(--clr-light);
+    font-size: 1.25rem;
+    margin-left: 1rem;
+    display: grid;
+    place-items: center;
+}
+
+.profile img {
+    border-radius: 50%;
+    max-width: 64px;
+}

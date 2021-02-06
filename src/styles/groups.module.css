@@ -177,3 +177,13 @@
 .invite input[type="submit"] {
     align-self: flex-start;
 }
+
+.buttons {
+    width: 450px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttons a {
+    margin-right: 1rem;
+}

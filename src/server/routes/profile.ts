@@ -6,18 +6,11 @@ const profile = express.Router();
 profile.use((req, res, next) => {
     if (!req.user) return res.redirect("/");
 
-    if (req.method.toLowerCase() === "post") {
-        const { email } = req.body;
-
-        //@ts-ignore
-        if (req.user?.email !== email) return res.redirect("/");
-    }
-
     return next();
 });
 
 profile.post("/email", async (req, res) => {
-    const { email, newEmail } = req.body;
+    const { newEmail } = req.body;
 
     if (
         await users.findOne({
@@ -28,7 +21,8 @@ profile.post("/email", async (req, res) => {
 
     await users.findOneAndUpdate(
         {
-            email,
+            //@ts-ignore
+            email: req.user.email,
         },
         {
             email: newEmail,
@@ -39,11 +33,12 @@ profile.post("/email", async (req, res) => {
 });
 
 profile.post("/username", async (req, res) => {
-    const { email, username } = req.body;
+    const { username } = req.body;
 
     await users.findOneAndUpdate(
         {
-            email,
+            //@ts-ignore
+            email: req.user.email,
         },
         {
             username,
@@ -54,10 +49,9 @@ profile.post("/username", async (req, res) => {
 });
 
 profile.post("/delete", async (req, res) => {
-    const { email } = req.body;
-
     await users.findOneAndDelete({
-        email,
+        //@ts-ignore
+        email: req.user.email,
     });
 
     req.logOut();

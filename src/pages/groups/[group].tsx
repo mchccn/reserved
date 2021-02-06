@@ -74,7 +74,7 @@ export default function Group({
                             Invite
                         </a>
                     ) : null}
-                    {isOwner ? (
+                    {isManager || isOwner ? (
                         <a href={`/groups/${group._id}/events`} className={profile.edit}>
                             Events
                         </a>

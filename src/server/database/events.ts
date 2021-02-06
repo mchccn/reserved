@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { scheduled } from "./scheduled";
 
 export const event = new mongoose.Schema(
     {
@@ -11,13 +10,17 @@ export const event = new mongoose.Schema(
             type: String,
             default: "",
         },
+        group: {
+            type: String,
+            required: true,
+        },
         minDuration: {
             type: Number,
             default: 0,
         },
         maxDuration: {
             type: Number,
-            default: Infinity,
+            default: 1440,
         },
         minDate: {
             type: Date,
@@ -33,7 +36,7 @@ export const event = new mongoose.Schema(
             },
         },
         scheduled: {
-            type: [scheduled],
+            type: Array,
             default: [],
         },
     },

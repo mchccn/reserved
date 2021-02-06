@@ -2,30 +2,47 @@ import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import TimeField from "react-simple-timefield";
-import Layout from "../../../../components/Layout";
-import groups from "../../../../server/database/groups";
-import styles from "../../../../styles/groups.module.css";
-import profile from "../../../../styles/profile.module.css";
+import Layout from "../../../../../components/Layout";
+import events from "../../../../../server/database/events";
+import groups from "../../../../../server/database/groups";
+import styles from "../../../../../styles/groups.module.css";
+import profile from "../../../../../styles/profile.module.css";
 
 interface IEventsProps {
     user: string;
     group: string;
+    event: string;
 }
 
-export default function CreateEvent({
+export default function EditEvent({
     user: stringifiedUser,
     group: stringifiedGroup,
+    event: stringifiedEvent,
 }: IEventsProps) {
-    const [user, group] = [JSON.parse(stringifiedUser), JSON.parse(stringifiedGroup)];
-    const [minDateEnabled, setMinDateEnabled] = useState(false);
-    const [maxDateEnabled, setMaxDateEnabled] = useState(false);
-    const [minDurEnabled, setMinDurEnabled] = useState(false);
-    const [maxDurEnabled, setMaxDurEnabled] = useState(false);
-    const [timeRange, setTimeRange] = useState<[string | null, string | null]>(["00:00", null]);
-    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([new Date(), null]);
+    const [user, group, event] = [
+        JSON.parse(stringifiedUser),
+        JSON.parse(stringifiedGroup),
+        JSON.parse(stringifiedEvent),
+    ];
+    const formatMinutes = (minutes: number) =>
+        `${Math.floor(minutes / 60)
+            .toString()
+            .padStart(2, "0")}:${(minutes % 60).toString().padStart(2, "0")}`;
+    const [minDateEnabled, setMinDateEnabled] = useState(!!new Date(event.minDate).getTime());
+    const [maxDateEnabled, setMaxDateEnabled] = useState(!!new Date(event.maxDate).getTime());
+    const [minDurEnabled, setMinDurEnabled] = useState(!!event.minDuration);
+    const [maxDurEnabled, setMaxDurEnabled] = useState(!!event.maxDuration);
+    const [timeRange, setTimeRange] = useState<[string | null, string | null]>([
+        formatMinutes(event.minDuration),
+        formatMinutes(event.maxDuration),
+    ]);
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+        new Date(event.minDate),
+        new Date(event.maxDate),
+    ]);
     const [invalidTimeRange, setInvalidTimeRange] = useState(false);
-    const [name, setName] = useState("");
-    const [desc, setDesc] = useState("");
+    const [name, setName] = useState(event.name);
+    const [desc, setDesc] = useState(event.description);
     const toMinutes = (timeStr: string) =>
         timeStr
             .split(":")
@@ -55,7 +72,7 @@ export default function CreateEvent({
                 <form
                     onSubmit={async (e) => {
                         e.preventDefault();
-                        await fetch(`/api/events/${group._id}/create`, {
+                        await fetch(`/api/events/${group._id}/update`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -73,7 +90,7 @@ export default function CreateEvent({
                     }}
                     className={styles.form}
                 >
-                    <h2>Create a new event</h2>
+                    <h2>Edit the event</h2>
                     <input
                         type="text"
                         value={name}
@@ -173,7 +190,7 @@ export default function CreateEvent({
                         value={
                             invalidTimeRange
                                 ? "Maximum duration is less than the minimum"
-                                : "Create"
+                                : "Edit"
                         }
                         disabled={invalidTimeRange}
                         className={profile[invalidTimeRange ? "error" : "edit"]}
@@ -187,16 +204,19 @@ export default function CreateEvent({
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const group = await groups.findById(ctx.query.group);
 
-    if (!group)
+    if (!group.events.includes(ctx.query.event))
         return {
             notFound: true,
         };
+
+    const event = await events.findById(ctx.query.event);
 
     return {
         props: {
             //@ts-ignore
             user: JSON.stringify(ctx.req.user),
             group: JSON.stringify(group),
+            event: JSON.stringify(event),
         },
     };
 };

@@ -1,22 +1,28 @@
 import { GetServerSideProps } from "next";
 import Layout from "../../../components/Layout";
+import events from "../../../server/database/events";
 import groups from "../../../server/database/groups";
 import styles from "../../../styles/groups.module.css";
 import profile from "../../../styles/profile.module.css";
 import viewbox from "../../../styles/viewbox.module.css";
-
 interface IEventsProps {
     user: string;
     group: string;
+    events: string;
+    isManager: boolean;
 }
 
 export default function Events({
     user: stringifiedUser,
     group: stringifiedGroup,
+    events: stringifiedEvents,
+    isManager,
 }: IEventsProps) {
-    const [user, group] = [JSON.parse(stringifiedUser), JSON.parse(stringifiedGroup)];
-
-    const { events } = group;
+    const [user, group, events] = [
+        JSON.parse(stringifiedUser),
+        JSON.parse(stringifiedGroup),
+        JSON.parse(stringifiedEvents),
+    ];
 
     return (
         <Layout user={stringifiedUser}>
@@ -83,15 +89,17 @@ export default function Events({
                 ) : (
                     <h3>There are no events</h3>
                 )}
-                <a
-                    href={`/groups/${group._id}/events/create`}
-                    className={profile.edit}
-                    style={{
-                        alignSelf: "flex-start",
-                    }}
-                >
-                    Create one
-                </a>
+                {!isManager ? (
+                    <a
+                        href={`/groups/${group._id}/events/create`}
+                        className={profile.edit}
+                        style={{
+                            alignSelf: "flex-start",
+                        }}
+                    >
+                        Create one
+                    </a>
+                ) : null}
             </div>
         </Layout>
     );
@@ -105,11 +113,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             notFound: true,
         };
 
+    const theirEvents = await events.find({
+        group: group._id,
+    });
+
     return {
         props: {
             //@ts-ignore
             user: JSON.stringify(ctx.req.user),
             group: JSON.stringify(group),
+            events: JSON.stringify(theirEvents),
+            //@ts-ignore
+            isManager: group.managers.includes(ctx.req.user.email),
         },
     };
 };

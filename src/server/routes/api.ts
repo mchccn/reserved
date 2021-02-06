@@ -1,4 +1,5 @@
 import express from "express";
+import { ObjectId } from "mongodb";
 import events from "../database/events";
 import groups from "../database/groups";
 import invites from "../database/invites";
@@ -15,15 +16,48 @@ api.use((req, res, next) => {
 api.get("/events/delete/:id", async (req, res) => {
     const { id } = req.params;
 
-    const event = await events.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
 
-    //TODO: implement deletion
+    const event = await events.findOne({
+        _id: id,
+    });
+
+    if (!event) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: event.group,
+    });
+
+    if (!group) {
+        await event.delete();
+        return res.redirect("/groups");
+    }
+
+    //@ts-ignore
+    if (group.owner !== req.user.email) return res.redirect(`/groups/${group._id}`);
+
+    await event.delete();
+
+    await groups.findOneAndUpdate(
+        { _id: event.group },
+        {
+            $pull: {
+                events: event._id,
+            },
+        }
+    );
+
+    return res.redirect(`/groups/${group._id}/events`);
 });
 
-api.post("/events/:id/create", async (req, res) => {
+api.post("/events/:id/update", async (req, res) => {
     const { id } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -32,26 +66,74 @@ api.post("/events/:id/create", async (req, res) => {
 
     const { name, description, timeRange, dateRange } = req.body;
 
+    await events.findOneAndUpdate(
+        {
+            name: name.trim(),
+            group: group._id,
+        },
+        {
+            name: name.trim(),
+            description: description.trim(),
+            group: group._id,
+            minDuration: timeRange[0] ? toMinutes(timeRange[0]) : null,
+            maxDuration: timeRange[1] ? toMinutes(timeRange[1]) : null,
+            minDate: dateRange[0],
+            maxDate: dateRange[1],
+        }
+    );
+
+    return res.redirect(`/groups/${group._id}/events`);
+});
+
+api.post("/events/:id/create", async (req, res) => {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
+
+    if (!group) return res.redirect("/groups");
+
+    //@ts-ignore
+    if (group.owner !== req.user.email) return res.redirect("/groups");
+
+    const { name, description, timeRange, dateRange } = req.body;
+
+    if (
+        await events.findOne({
+            name: name.trim(),
+            group: group._id,
+        })
+    )
+        return res.redirect(`/groups/${group._id}/events`);
+
     const event = await events.create({
-        name,
-        description,
+        name: name.trim(),
+        description: description.trim(),
+        group: group._id,
         minDuration: timeRange[0] ? toMinutes(timeRange[0]) : null,
         maxDuration: timeRange[1] ? toMinutes(timeRange[1]) : null,
         minDate: dateRange[0],
         maxDate: dateRange[1],
     });
 
-    group.events.push(event);
+    group.events.push(event._id);
 
     await group.save();
 
-    res.redirect(`/groups/${group._id}/events`);
+    return res.redirect(`/groups/${group._id}/events`);
 });
 
 api.get("/demote/:id/:email", async (req, res) => {
     const { id, email } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -84,7 +166,11 @@ api.get("/demote/:id/:email", async (req, res) => {
 api.get("/promote/:id/:email", async (req, res) => {
     const { id, email } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -117,7 +203,11 @@ api.get("/promote/:id/:email", async (req, res) => {
 api.get("/remove/:id/:email", async (req, res) => {
     const { id, email } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -160,7 +250,11 @@ api.get("/remove/:id/:email", async (req, res) => {
 api.get("/decline/:id", async (req, res) => {
     const { id } = req.params;
 
-    const invite = await invites.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const invite = await invites.findOne({
+        _id: id,
+    });
 
     //@ts-ignore
     if (!invite || invite.email !== req.user.email) return res.redirect("/invites");
@@ -173,7 +267,11 @@ api.get("/decline/:id", async (req, res) => {
 api.get("/delete/:id", async (req, res) => {
     const { id } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -206,7 +304,11 @@ api.get("/delete/:id", async (req, res) => {
 api.get("/leave/:id", async (req, res) => {
     const { id } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -231,7 +333,9 @@ api.get("/leave/:id", async (req, res) => {
 api.post("/invite/:id", async (req, res) => {
     const { id } = req.params;
 
-    const group = await groups.findById(id);
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 

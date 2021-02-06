@@ -25,7 +25,11 @@ group.get("/:id", async (req, res, next) => {
 group.get("/:id/invite", async (req, res, next) => {
     const { id } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -39,7 +43,11 @@ group.get("/:id/invite", async (req, res, next) => {
 group.get("/:id/invite/:invite", async (req, res, next) => {
     const { id, invite } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -69,12 +77,17 @@ group.get("/:id/invite/:invite", async (req, res, next) => {
 group.get("/:id/events", async (req, res, next) => {
     const { id } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
     //@ts-ignore
-    if (group.owner !== req.user.email) return res.redirect(`/groups/${id}`);
+    if (group.owner !== req.user.email && !group.managers.includes(req.user.email))
+        return res.redirect(`/groups/${id}`);
 
     return next();
 });
@@ -82,7 +95,11 @@ group.get("/:id/events", async (req, res, next) => {
 group.get("/:id/events/create", async (req, res, next) => {
     const { id } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
@@ -95,14 +112,23 @@ group.get("/:id/events/create", async (req, res, next) => {
 group.get("/:id/events/:event", async (req, res, next) => {
     const { id, event } = req.params;
 
-    const group = await groups.findById(id);
+    if (!ObjectId.isValid(id)) return res.redirect("/groups");
+
+    const group = await groups.findOne({
+        _id: id,
+    });
 
     if (!group) return res.redirect("/groups");
 
     //@ts-ignore
-    if (group.owner !== req.user.email) return res.redirect(`/groups/${id}`);
+    if (group.owner !== req.user.email && !group.managers.includes(req.user.email))
+        return res.redirect(`/groups/${id}`);
 
-    const eventDoc = await events.findById(event);
+    if (!ObjectId.isValid(event)) return next();
+
+    const eventDoc = await events.findOne({
+        _id: event,
+    });
 
     if (!eventDoc) return res.redirect(`/groups/${id}/events`);
 

@@ -43,16 +43,46 @@ export default function Events({
                         </a>
                     ) : null}
                 </div>
-                <h3>Events</h3>
-                <div className={viewbox.viewbox}>
-                    {events.map((e: any) => (
-                        <div className={viewbox.item}>
-                            <div>
-                                <p className={viewbox.smaller}>{e.name}</p>
-                            </div>
+                {events.length ? (
+                    <>
+                        <h3>Events</h3>
+                        <div className={viewbox.viewbox}>
+                            {events.map((e: any) => (
+                                <a
+                                    href={`/groups/${group._id}/events/${e._id}`}
+                                    key={Math.random()}
+                                >
+                                    <div className={viewbox.item}>
+                                        <div>
+                                            <p
+                                                className={viewbox.smaller}
+                                                style={{
+                                                    marginLeft: "1rem",
+                                                }}
+                                            >
+                                                {e.name}
+                                            </p>
+                                        </div>
+                                        <p className={viewbox.tip}>
+                                            lasts from{" "}
+                                            {new Date(e.minDate).toLocaleDateString()} to{" "}
+                                            {new Date(e.maxDate).getTime()
+                                                ? new Date(e.maxDate).toLocaleDateString()
+                                                : " the end of time"}
+                                        </p>
+                                        <p className={viewbox.notice}>
+                                            {e.description.length > 64
+                                                ? `${e.description.slice(0, 64 - 3)}...`
+                                                : e.description}
+                                        </p>
+                                    </div>
+                                </a>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </>
+                ) : (
+                    <h3>There are no events</h3>
+                )}
                 <a
                     href={`/groups/${group._id}/events/create`}
                     className={profile.edit}

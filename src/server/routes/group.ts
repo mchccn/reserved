@@ -1,5 +1,6 @@
 import express from "express";
 import { ObjectId } from "mongodb";
+import events from "../database/events";
 import groups from "../database/groups";
 import invites from "../database/invites";
 import users from "../database/user";
@@ -16,7 +17,7 @@ group.get("/:id", async (req, res, next) => {
     const { id } = req.params;
 
     //@ts-ignore
-    if (!req.user.groups.includes(id) && ObjectId.isValid(id)) return res.redirect("/groups");
+    if (!req.user.groups.includes(id) || !ObjectId.isValid(id)) return res.redirect("/groups");
 
     return next();
 });
@@ -74,6 +75,36 @@ group.get("/:id/events", async (req, res, next) => {
 
     //@ts-ignore
     if (group.owner !== req.user.email) return res.redirect(`/groups/${id}`);
+
+    return next();
+});
+
+group.get("/:id/events/create", async (req, res, next) => {
+    const { id } = req.params;
+
+    const group = await groups.findById(id);
+
+    if (!group) return res.redirect("/groups");
+
+    //@ts-ignore
+    if (group.owner !== req.user.email) return res.redirect(`/groups/${id}`);
+
+    return next();
+});
+
+group.get("/:id/events/:event", async (req, res, next) => {
+    const { id, event } = req.params;
+
+    const group = await groups.findById(id);
+
+    if (!group) return res.redirect("/groups");
+
+    //@ts-ignore
+    if (group.owner !== req.user.email) return res.redirect(`/groups/${id}`);
+
+    const eventDoc = await events.findById(event);
+
+    if (!eventDoc) return res.redirect(`/groups/${id}/events`);
 
     return next();
 });

@@ -42,12 +42,52 @@
     resize: none;
 }
 
-.form input[type="text"] {
+.form > div.flex {
+    width: 100%;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.form > div.flex > button {
+    margin: 0;
+}
+
+.form > input[type="text"] {
     font-family: var(--ff-secondary);
     padding: 0.25rem;
     margin: 0.5rem 0;
     font-size: 1rem;
     width: 400px;
+}
+
+.form .time {
+    width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form .time div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 150px;
+}
+
+.form .time span {
+    font-size: 1rem;
+    color: var(--clr-dark-grey);
+}
+
+.form .time input {
+    /* flex: 1; */
+    padding: 0.25rem;
+    margin: 0.75rem 0;
+    width: 60px;
+    text-align: center;
+    font-size: 1rem;
 }
 
 .header {

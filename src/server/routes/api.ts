@@ -1,4 +1,5 @@
 import express from "express";
+import events from "../database/events";
 import groups from "../database/groups";
 import invites from "../database/invites";
 import users from "../database/user";
@@ -9,6 +10,42 @@ api.use((req, res, next) => {
     if (!req.user) return res.redirect("/");
 
     return next();
+});
+
+api.get("/events/delete/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const event = await events.findById(id);
+
+    //TODO: implement deletion
+});
+
+api.post("/events/:id/create", async (req, res) => {
+    const { id } = req.params;
+
+    const group = await groups.findById(id);
+
+    if (!group) return res.redirect("/groups");
+
+    //@ts-ignore
+    if (group.owner !== req.user.email) return res.redirect("/groups");
+
+    const { name, description, timeRange, dateRange } = req.body;
+
+    const event = await events.create({
+        name,
+        description,
+        minDuration: timeRange[0] ? toMinutes(timeRange[0]) : null,
+        maxDuration: timeRange[1] ? toMinutes(timeRange[1]) : null,
+        minDate: dateRange[0],
+        maxDate: dateRange[1],
+    });
+
+    group.events.push(event);
+
+    await group.save();
+
+    res.redirect(`/groups/${group._id}/events`);
 });
 
 api.get("/demote/:id/:email", async (req, res) => {
@@ -125,7 +162,10 @@ api.get("/decline/:id", async (req, res) => {
 
     const invite = await invites.findById(id);
 
-    if (invite) invite.delete();
+    //@ts-ignore
+    if (!invite || invite.email !== req.user.email) return res.redirect("/invites");
+
+    invite.delete();
 
     return res.redirect("/invites");
 });
@@ -249,5 +289,10 @@ api.post("/create", async (req, res) => {
 
     res.redirect(`/groups/${group._id}`);
 });
+
+const toMinutes = (timeStr: string) =>
+    timeStr
+        .split(":")
+        .reduce((acc, cur, i) => (i === 0 ? acc + parseInt(cur) * 60 : acc + parseInt(cur)), 0);
 
 export default api;

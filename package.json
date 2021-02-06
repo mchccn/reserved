@@ -38,6 +38,7 @@
         "passport-twitter": "^1.0.4",
         "react": "17.0.1",
         "react-calendar": "^3.3.0",
-        "react-dom": "17.0.1"
+        "react-dom": "17.0.1",
+        "react-simple-timefield": "^3.2.3"
     }
 }
